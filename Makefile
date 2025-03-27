@@ -80,17 +80,9 @@ dropdb:
 install-appsec-tools:
 	ASK_FOR_SNYK_TOKEN_BYPASS=true SNYK_TOKEN=${SNYK_TOKEN} bash bin/install-appsec-tools.sh
 
-#:[.'.]:> Instala herramientas gRPC - ¡Todo lo necesario para trabajar con protobuf y gRPC!
-install-grpc-tools:
-	bash bin/install-grpc-tools.sh
-
 #:[.'.]:> Genera certificado SSH para GitHub - ¡Para conectarse fácil y seguro!
 certificate:
 	bash bin/github-ssh-key.sh $(name) $(email)
-
-#:[.'.]:> Genera código desde definiciones proto - ¡Actualiza las interfaces de comunicación!
-proto:
-	bash bin/proto.sh
 
 #:[.'.]:> Construye imagen Docker - ¡Empaquetamos la app para distribuirla fácilmente!
 image:

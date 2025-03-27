@@ -24,7 +24,6 @@
 
 Este repositorio contiene boilerplates para servicios backend que incluyen:
 
-- Configuración de **gRPC** y **Protobuf**.
 - Integración con **PostgreSQL** usando GORM.
 - Servidor **REST** con Gin.
 - Scripts para automatizar tareas comunes.
@@ -36,7 +35,6 @@ Este repositorio contiene boilerplates para servicios backend que incluyen:
 ## 🛠️ Tecnologías utilizadas
 
 - **Go** (1.24.1)
-- **gRPC** y **Protobuf**
 - **PostgreSQL** con GORM
 - **Viper** para configuración
 - **Gin** para APIs REST
@@ -141,11 +139,10 @@ Este proyecto está diseñado para ser configurado principalmente a través de v
         ```
 
     - `HTTP_SERVER_ADDRESS`: Dirección del servidor REST. Ejemplo: `:3000`
-    - `GRPC_SERVER_ADDRESS`: Dirección del servidor gRPC. Ejemplo: `:30000`
 
 2. **Variables opcionales:**
 
-    - Si no se especifican `HTTP_SERVER_ADDRESS` y `GRPC_SERVER_ADDRESS`, se usarán los valores por defecto (`:3000` y `:30000` respectivamente).
+    - Si no se especifica `HTTP_SERVER_ADDRESS`, se usarán los valores por defecto (`:3000`).
 
 ### Prioridad de configuración 🥇
 
@@ -162,11 +159,9 @@ services:
     image: markitos-svc-boilerplates-rest:latest
     ports:
       - "3000:3000"
-      - "30000:30000"
     environment:
       DATABASE_DSN: "host=db user=admin password=admin dbname=markitos-svc-boilerplates-rest sslmode=disable"
       HTTP_SERVER_ADDRESS: ":3000"
-      GRPC_SERVER_ADDRESS: ":30000"
 ```
 
 ### Recomendaciones ✅

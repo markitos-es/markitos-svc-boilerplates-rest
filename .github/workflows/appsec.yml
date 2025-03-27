@@ -8,7 +8,7 @@ name: Security SAST SCA LEAKS Analysis
 #:#['.']:>----------------------------------------------------------------------
 on:
   push:
-    branches: [ master ] # 👈 ¡Cambia esto para activar!
+    branches: [ your-branch ] # 👈 ¡Cambia esto para activar!
 #:#['.']:>----------------------------------------------------------------------
 #:#['.']:> ¡Ejemplos de triggers! 🚀
 #:#['.']:>

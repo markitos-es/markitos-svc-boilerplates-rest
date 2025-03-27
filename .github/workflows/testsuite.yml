@@ -8,7 +8,7 @@ name: Test Unitarios Integración End-to-End
 #:#['.']:>----------------------------------------------------------------------
 on:
   push:
-    branches: [ master, your-branch ] # 👈 ¡Cambia esto para activar!
+    branches: [ master ] # 👈 ¡Cambia esto para activar!
 #:#['.']:>----------------------------------------------------------------------
 #:#['.']:> ¡Ejemplos de triggers! 🚀
 #:#['.']:>

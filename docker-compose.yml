@@ -1,0 +1,12 @@
+services:
+  markitos-common-postgres:
+    image: postgres:latest
+    container_name: markitos-common-postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: markitos-svc-boilerplates-rest
+    ports:
+      - "5432:5432"

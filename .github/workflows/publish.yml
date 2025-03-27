@@ -1,0 +1,103 @@
+name: Publish Docker Image
+
+#:#['.']:>----------------------------------------------------------------------
+#:#['.']:> ¡Este workflow es nuestro lanzacohetes! 🚀
+#:#['.']:> Se encarga de construir y publicar la imagen Docker en GitHub Packages
+#:#['.']:> cuando creamos un tag. ¡Directo al espacio! 🌌
+#:#['.']:>----------------------------------------------------------------------
+on:
+  push:
+    tags:
+      - '*.*.*' # 👈 ¡Cambia esto para activar!
+#:#['.']:>----------------------------------------------------------------------
+#:#['.']:> ¡Ejemplos de triggers! 🚀
+#:#['.']:>
+#:#['.']:> - Para ejecutar en cada push a la rama "main":
+#:#['.']:>   branches: [ main ]
+#:#['.']:>
+#:#['.']:> - Para ejecutar en cada pull request a la rama "develop":
+#:#['.']:>   pull_request:
+#:#['.']:>     branches: [ develop ]
+#:#['.']:>
+#:#['.']:> - Para ejecutar manualmente (workflow_dispatch):
+#:#['.']:>   workflow_dispatch:
+#:#['.']:>
+#:#['.']:> - Para ejecutar cada día a las 03:00 AM UTC:
+#:#['.']:>   schedule:
+#:#['.']:>     - cron: '0 3 * * *'
+#:#['.']:>
+#:#['.']:> - Para ejecutar en cada push de tags:
+#:#['.']:>   tags:
+#:#['.']:>     - '*'
+#:#['.']:>----------------------------------------------------------------------
+
+
+#:#['.']:>----------------------------------------------------------------------
+#:#['.']:> ¡Creamos el trabajo "publish"! 🏭
+#:#['.']:> Este trabajo es el que se encarga de construir y publicar la imagen.
+#:#['.']:> ¡Es el corazón de la automatización! ❤️
+#:#['.']:>----------------------------------------------------------------------
+jobs:
+  publish:
+    name: Build and Publish Docker Image
+    runs-on: ubuntu-latest
+
+    #:#['.']:>------------------------------------------------------------------
+    #:#['.']:> ¡Damos permisos para publicar! 🔑
+    #:#['.']:> Necesitamos permisos para leer el código y escribir en GitHub
+    #:#['.']:> Packages. ¡Con permiso, por favor! 🙏
+    #:#['.']:>------------------------------------------------------------------
+    permissions:
+      contents: read
+      packages: write
+
+    #:#['.']:>------------------------------------------------------------------
+    #:#['.']:> ¡Aquí vienen los pasos! 🚶
+    #:#['.']:> Cada paso es una tarea específica que se ejecuta en el workflow.
+    #:#['.']:> ¡Vamos a ver qué hacen! 👀
+    #:#['.']:>------------------------------------------------------------------
+    steps:
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Clonamos el código! 👯
+      #:#['.']:> Necesitamos una copia del código para poder construir la imagen.
+      #:#['.']:> ¡Sin código no hay imagen! 🖼️
+      #:#['.']:>----------------------------------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Autenticamos con GitHub Packages! 🔐
+      #:#['.']:> Necesitamos autenticarnos para poder publicar la imagen.
+      #:#['.']:> ¡Usuario y contraseña, por favor! 📝
+      #:#['.']:>----------------------------------------------------------------
+      - name: Log in to GitHub Docker Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Construimos la imagen Docker! 🏗️
+      #:#['.']:> Usamos el Dockerfile para construir la imagen.
+      #:#['.']:> ¡Ladrillo a ladrillo! 🧱
+      #:#['.']:>----------------------------------------------------------------
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/markitos-svc-boilerplates-rest:${{ github.ref_name }} .
+        env:
+          VERSION: ${{ github.ref_name }}
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Publicamos la imagen en GitHub Packages! 📤
+      #:#['.']:> Subimos la imagen al registro de contenedores de GitHub.
+      #:#['.']:> ¡A volar! 🚀
+      #:#['.']:>----------------------------------------------------------------
+      - name: Push Docker image
+        run: docker push ghcr.io/${{ github.repository_owner }}/markitos-svc-boilerplates-rest:${{ github.ref_name }}
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Verificamos la imagen publicada! ✅
+      #:#['.']:> Nos aseguramos de que la imagen se ha publicado correctamente.
+      #:#['.']:> ¡Misión cumplida! 🎉
+      #:#['.']:>----------------------------------------------------------------
+      - name: Verify published image
+        run: |
+          echo "Docker image published successfully:"
+          echo "ghcr.io/${{ github.repository_owner }}/markitos-svc-boilerplates-rest:${{ github.ref_name }}"

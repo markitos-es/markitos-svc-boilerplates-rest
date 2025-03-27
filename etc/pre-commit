@@ -1,0 +1,183 @@
+#!/bin/bash
+# filepath: /home/markitos/desarrollo/2025/public/markitos-svc-boilerplates-rest/etc/pre-commit
+
+##############################################################################
+#                                                                            #
+#                      🔒 Markitos DevSecOps Kulture 🔒                      #
+#                          El camino del artesano                            #
+#                                                                            #
+#            "La seguridad es un viaje, no un destino" - Markitos            #
+#                                                                            #
+#                Created: Marzo 2025       Updated: Marzo 2025               #
+#                                                                            #
+##############################################################################
+#                                                                            
+# CÓMO USAR ESTE HOOK:                                                       
+#                                                                            
+# 1. Instala gitleaks:                                                       
+#    • Con package managers:                                                 
+#      - brew install gitleaks (macOS)                                       
+#      - apt install gitleaks (Ubuntu)                                       
+#                                                                            
+#    • Descarga directa del binario:                                         
+#      - Linux x64:                                                          
+#        curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_linux_x64.tar.gz | tar xz -C /tmp/ #
+#        sudo mv /tmp/gitleaks /usr/local/bin/                              
+#                                                                           
+#      - Linux ARM:                                                         
+#        curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_linux_arm64.tar.gz | tar xz -C /tmp/ #
+#        sudo mv /tmp/gitleaks /usr/local/bin/                              
+#                                                                            
+#      - macOS Intel:                                                        
+#        curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_darwin_x64.tar.gz | tar xz -C /tmp/ #
+#        sudo mv /tmp/gitleaks /usr/local/bin/                              
+#                                                                            
+#      - macOS ARM (M1/M2):                                                  
+#        curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_darwin_arm64.tar.gz | tar xz -C /tmp/ 
+#        sudo mv /tmp/gitleaks /usr/local/bin/                              
+#                                                                            
+#      - Windows:                                                            
+#        Descarga de: https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_windows_x64.zip
+#        Extrae y agrega al PATH                                             
+#                                                                            
+# 2. Instala snyk CLI:                                                       
+#    • Con npm:                                                              
+#      npm install -g snyk                                                   
+#                                                                            
+#    • Sin npm, con binario directo:                                         
+#      - macOS:                                                              
+#        curl https://static.snyk.io/cli/latest/snyk-macos -o snyk           
+#        chmod +x ./snyk                                                     
+#        sudo mv ./snyk /usr/local/bin/                                      
+#                                                                            
+#      - Linux:                                                              
+#        curl https://static.snyk.io/cli/latest/snyk-linux -o snyk           
+#        chmod +x ./snyk                                                     
+#        sudo mv ./snyk /usr/local/bin/                                      
+#                                                                            
+#      - Windows:                                                            
+#        curl https://static.snyk.io/cli/latest/snyk-win.exe -o snyk.exe     
+#        # Agrégalo a tu PATH                                                
+#                                                                            
+# 3. Configura tu token Snyk:                                                
+#    - Crea una cuenta en snyk.io                                            
+#    - Obtén tu token API                                                    
+#    - Añade a tu ~/.bashrc o ~/.zshrc: export SNYK_TOKEN="tu-token"         
+#                                                                            
+# 4. Instala este hook:                                                      
+#    - cp etc/pre-commit .git/hooks/                                         
+#    - chmod +x .git/hooks/pre-commit                                        
+#                                                                            
+#############################################################################
+
+# Colores para mejor visualización
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
+
+# Banner de inicio
+echo -e "${CYAN}${BOLD}"
+echo "╔═══════════════════════════════════════════════════════════════╗"
+echo "║                   MARKITOS SECURITY CHECK                     ║"
+echo "╚═══════════════════════════════════════════════════════════════╝"
+echo -e "${NC}"
+
+# Variables para rastrear problemas encontrados
+SECRET_ISSUES=0
+SECURITY_ISSUES=0
+
+# Función para imprimir mensajes formateados
+print_status() {
+  local status=$1
+  local message=$2
+  local color=$3
+  
+  echo -e "${color}[${status}]${NC} ${message}"
+}
+
+# === GITLEAKS - Detección de secretos ===
+echo -e "\n${MAGENTA}${BOLD}➤ Ejecutando detección de secretos con Gitleaks...${NC}\n"
+
+if ! command -v gitleaks &> /dev/null; then
+  print_status "ERROR" "Gitleaks no está instalado. Instálalo desde: https://github.com/gitleaks/gitleaks/releases" "${RED}"
+else
+  # Simplemente ejecutar gitleaks detect
+  GITLEAKS_OUTPUT=$(gitleaks detect 2>&1)
+  GITLEAKS_EXIT=$?
+  
+  if [ $GITLEAKS_EXIT -eq 1 ]; then
+    print_status "ALERTA" "¡Se encontraron secretos potenciales en tu código!" "${RED}"
+    echo -e "${YELLOW}${GITLEAKS_OUTPUT}${NC}"
+    SECRET_ISSUES=1
+  else
+    print_status "OK" "No se encontraron secretos en el código" "${GREEN}"
+  fi
+fi
+
+# === SNYK - Análisis estático de código ===
+echo -e "\n${MAGENTA}${BOLD}➤ Ejecutando análisis de seguridad con Snyk...${NC}\n"
+
+if ! command -v snyk &> /dev/null; then
+  print_status "ERROR" "Snyk no está instalado. Instálalo con: npm install -g snyk o descarga el binario desde la web oficial" "${RED}"
+elif [ -z "$SNYK_TOKEN" ]; then
+  print_status "ERROR" "Variable SNYK_TOKEN no configurada. Añade 'export SNYK_TOKEN=tu-token' a tu ~/.bashrc" "${RED}"
+else
+  # Ejecutar Snyk para detectar vulnerabilidades High y Critical
+  SNYK_OUTPUT=$(SNYK_TOKEN=$SNYK_TOKEN snyk code test --severity-threshold=high 2>&1)
+  SNYK_EXIT=$?
+  
+  if [ $SNYK_EXIT -ne 0 ] && [ $SNYK_EXIT -ne 1 ]; then
+    print_status "ERROR" "Error al ejecutar Snyk: $SNYK_EXIT" "${RED}"
+    echo -e "${YELLOW}${SNYK_OUTPUT}${NC}"
+  elif echo "$SNYK_OUTPUT" | grep -q "Critical\|High"; then
+    print_status "ALERTA" "¡Se encontraron vulnerabilidades High/Critical en el código!" "${RED}"
+    echo -e "${YELLOW}$(echo "$SNYK_OUTPUT" | grep -E "Critical severity|High severity" -A 3 -B 1)${NC}"
+    SECURITY_ISSUES=1
+  else
+    print_status "OK" "No se encontraron vulnerabilidades críticas o altas" "${GREEN}"
+  fi
+fi
+
+# === RESUMEN Y AVISO FINAL ===
+echo -e "\n${CYAN}${BOLD}════════════════════ RESUMEN ═════════════════════${NC}\n"
+
+if [ $SECRET_ISSUES -eq 1 ] || [ $SECURITY_ISSUES -eq 1 ]; then
+  echo -e "${RED}${BOLD}"
+  echo "╔═══════════════════════════════════════════════════════════════╗"
+  echo "║                       ¡ALERTA DE SEGURIDAD!                   ║"
+  echo "║                                                               ║"
+  echo "║  Se detectaron problemas de seguridad en tu código.           ║"
+  echo "║  Esta es solo una advertencia, puedes continuar el commit.    ║"
+  echo "║                                                               ║"
+  echo "║  Recuerda: 'El código seguro es un acto de respeto hacia      ║"
+  echo "║   tus usuarios y hacia ti mismo.' - Markitos                  ║"
+  echo "╚═══════════════════════════════════════════════════════════════╝"
+  echo -e "${NC}"
+  
+  # Confirmar si quiere continuar
+  echo -e "${YELLOW}¿Deseas continuar con el commit a pesar de los problemas? [s/N]${NC}"
+  read -r response
+  if [[ ! "$response" =~ ^[sS]$ ]]; then
+    echo -e "${RED}Commit abortado por el usuario.${NC}"
+    exit 1
+  fi
+  
+  echo -e "${YELLOW}Continuando con el commit. Recuerda revisar los problemas detectados.${NC}"
+else
+  echo -e "${GREEN}${BOLD}"
+  echo "╔═══════════════════════════════════════════════════════════════╗"
+  echo "║                       ¡TODO EN ORDEN!                         ║"
+  echo "║                                                               ║"
+  echo "║  No se detectaron problemas de seguridad críticos.            ║"
+  echo "║  Sigue manteniendo el código seguro.                          ║"
+  echo "║                                                               ║"
+  echo "╚═══════════════════════════════════════════════════════════════╝"
+  echo -e "${NC}"
+fi
+
+exit 0

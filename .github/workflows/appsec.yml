@@ -1,0 +1,159 @@
+name: Security SAST SCA LEAKS Analysis
+
+#:#['.']:>----------------------------------------------------------------------
+#:#['.']:> ¡Este workflow es nuestro guardián de la seguridad! 🛡️
+#:#['.']:> Se encarga de analizar el código en busca de vulnerabilidades,
+#:#['.']:> secretos y otros problemillas que nos pueden dar un buen susto. 👻
+#:#['.']:> ¡Más vale prevenir que lamentar, mi gente! 😉
+#:#['.']:>----------------------------------------------------------------------
+on:
+  push:
+    branches: [ master, your-branch ] # 👈 ¡Cambia esto para activar!
+#:#['.']:>----------------------------------------------------------------------
+#:#['.']:> ¡Ejemplos de triggers! 🚀
+#:#['.']:>
+#:#['.']:> - Para ejecutar en cada push a la rama "main":
+#:#['.']:>   branches: [ main ]
+#:#['.']:>
+#:#['.']:> - Para ejecutar en cada pull request a la rama "develop":
+#:#['.']:>   pull_request:
+#:#['.']:>     branches: [ develop ]
+#:#['.']:>
+#:#['.']:> - Para ejecutar manualmente (workflow_dispatch):
+#:#['.']:>   workflow_dispatch:
+#:#['.']:>
+#:#['.']:> - Para ejecutar cada día a las 03:00 AM UTC:
+#:#['.']:>   schedule:
+#:#['.']:>     - cron: '0 3 * * *'
+#:#['.']:>
+#:#['.']:> - Para ejecutar en cada push de tags:
+#:#['.']:>   tags:
+#:#['.']:>     - '*'
+#:#['.']:>----------------------------------------------------------------------
+
+#:#['.']:>----------------------------------------------------------------------
+#:#['.']:> ¡Creamos el trabajo "build"! 👷
+#:#['.']:> Este trabajo es el que se encarga de ejecutar todos los pasos del
+#:#['.']:> análisis de seguridad. ¡Es el corazón de este workflow! ❤️
+#:#['.']:>----------------------------------------------------------------------
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    #:#['.']:>------------------------------------------------------------------
+    #:#['.']:> ¡Levantamos PostgreSQL con Docker! 🐳
+    #:#['.']:> Necesitamos una base de datos para algunas pruebas, así que usamos
+    #:#['.']:> Docker para levantar un contenedor de PostgreSQL. ¡Así de fácil! 😎
+    #:#['.']:>------------------------------------------------------------------
+    services:
+      markitos-common-postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: markitos-svc-boilerplates-rest
+        ports:
+          - 5432:5432
+        options: >-
+          --name markitos-common-postgres
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    #:#['.']:>------------------------------------------------------------------
+    #:#['.']:> ¡Aquí vienen los pasos! 🚶
+    #:#['.']:> Cada paso es una tarea específica que se ejecuta en el workflow.
+    #:#['.']:> ¡Vamos a ver qué hacen! 👀
+    #:#['.']:>------------------------------------------------------------------
+    steps:
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Clonamos el código! 👯
+      #:#['.']:> Necesitamos una copia del código para poder analizarlo.
+      #:#['.']:> ¡Sin código no hay paraíso! 🌴
+      #:#['.']:>----------------------------------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Configuramos Go! ⚙️
+      #:#['.']:> Necesitamos Go para instalar dependencias y ejecutar algunas
+      #:#['.']:> pruebas. ¡Go, go, go! 🚀
+      #:#['.']:>----------------------------------------------------------------
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+          cache: true
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Instalamos el cliente de PostgreSQL! 🐘
+      #:#['.']:> Necesitamos el cliente de PostgreSQL para conectarnos a la base
+      #:#['.']:> de datos y ejecutar algunas consultas. ¡Conectando! 🔌
+      #:#['.']:>----------------------------------------------------------------
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Verificamos la conexión a PostgreSQL! ✅
+      #:#['.']:> Nos aseguramos de que podemos conectarnos a la base de datos y
+      #:#['.']:> que todo está funcionando correctamente. ¡Todo OK! 👍
+      #:#['.']:>----------------------------------------------------------------
+      - name: Verify PostgreSQL connection
+        run: |
+          echo "Verificando conexión a PostgreSQL..."
+          PGPASSWORD=admin pg_isready -h localhost -p 5432 -U admin || echo "Error conectando a PostgreSQL"
+          PGPASSWORD=admin psql -h localhost -p 5432 -U admin -d markitos-svc-boilerplates-rest -c "SELECT version();" || echo "Error ejecutando consulta SQL"
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Instalamos las dependencias de Go! ⬇️
+      #:#['.']:> Descargamos todas las dependencias necesarias para el proyecto.
+      #:#['.']:> ¡Sin dependencias no hay paraíso! 🌴
+      #:#['.']:>----------------------------------------------------------------
+      - name: Install dependencies
+        run: |
+          go mod download
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Probamos la conexión directa con psql! 🧪
+      #:#['.']:> Verificamos que podemos ejecutar consultas SQL directamente
+      #:#['.']:> desde el workflow. ¡Directo al grano! 🎯
+      #:#['.']:>----------------------------------------------------------------
+      - name: Test PostgreSQL connection directly
+        run: |
+          echo "Probando conexión directa con psql:"
+          PGPASSWORD=admin psql -h localhost -p 5432 -U admin -d markitos-svc-boilerplates-rest -c "SELECT current_user, current_database();"
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Debugueamos el contenedor de PostgreSQL! 🐛
+      #:#['.']:> Si algo va mal, podemos inspeccionar el contenedor de
+      #:#['.']:> PostgreSQL para ver qué está pasando. ¡Al rescate! 🚑
+      #:#['.']:>----------------------------------------------------------------
+      - name: Debug PostgreSQL container
+        run: |
+          docker ps
+          docker logs $(docker ps -q --filter "name=postgres")
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Instalamos las herramientas de seguridad! 🛡️
+      #:#['.']:> Usamos el Makefile para instalar Snyk y Gitleaks.
+      #:#['.']:> ¡Más vale tener herramientas que no tenerlas! 🧰
+      #:#['.']:>----------------------------------------------------------------
+      - name: Install security tools
+        run: make install-appsec-tools
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ASK_FOR_SNYK_TOKEN_BYPASS: "true"
+
+      #:#['.']:>----------------------------------------------------------------
+      #:#['.']:> ¡Ejecutamos el análisis de seguridad! 🔬
+      #:#['.']:> Usamos el Makefile para ejecutar Snyk y Gitleaks y detectar
+      #:#['.']:> vulnerabilidades y secretos. ¡A buscar problemas! 🕵️
+      #:#['.']:>----------------------------------------------------------------
+      - name: Run security analysis
+        run: make security
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

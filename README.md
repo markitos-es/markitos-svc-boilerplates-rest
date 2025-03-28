@@ -114,6 +114,12 @@ Este repositorio contiene boilerplates para servicios backend que incluyen:
 
     *   **Por qué:** Construye la imagen Docker con una versión específica.
 
+    ```bash
+    make caas SERVICE_NAME=nuevo-servicio ENTITY_NAME=entidad
+    ```
+
+    *   **Por qué:** Crea un nuevo servicio y entidad en el proyecto.
+
 5. ¡Listo para desarrollar! 🎉
 
 ---

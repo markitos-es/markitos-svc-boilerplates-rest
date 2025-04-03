@@ -11,18 +11,18 @@ import (
 )
 
 func TestBoilerplateCanGetOne(t *testing.T) {
-	var boiler *domain.Boilerplate = createPersistedRandomBoilerplate()
+	var boilerplate *domain.Boilerplate = createPersistedRandomBoilerplate()
 
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, "/v1/boilerplates/"+boiler.Id, nil)
+	request, _ := http.NewRequest(http.MethodGet, "/v1/boilerplates/"+boilerplate.Id, nil)
 	request.Header.Set("Content-Type", "application/json")
 	RESTRouter().ServeHTTP(recorder, request)
 
 	var response map[string]any
 	json.NewDecoder(recorder.Body).Decode(&response)
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Equal(t, response["name"].(string), boiler.Name)
-	assert.Equal(t, response["id"].(string), boiler.Id)
+	assert.Equal(t, response["name"].(string), boilerplate.Name)
+	assert.Equal(t, response["id"].(string), boilerplate.Id)
 
 	deletePersisteRandomBoilerplate(response["id"].(string))
 }

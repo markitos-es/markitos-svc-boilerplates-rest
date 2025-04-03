@@ -13,14 +13,14 @@ import (
 )
 
 func TestCanUpdateABoilerplate(t *testing.T) {
-	var boiler *domain.Boilerplate = createPersistedRandomBoilerplate()
+	var boilerplate *domain.Boilerplate = createPersistedRandomBoilerplate()
 
-	name := boiler.Name + " UPDATED"
+	name := boilerplate.Name + " UPDATED"
 	recorder := httptest.NewRecorder()
 	requestBody, _ := json.Marshal(services.BoilerplateUpdateRequest{
 		Name: name,
 	})
-	request, _ := http.NewRequest(http.MethodPatch, "/v1/boilerplates/"+boiler.Id, bytes.NewBuffer(requestBody))
+	request, _ := http.NewRequest(http.MethodPatch, "/v1/boilerplates/"+boilerplate.Id, bytes.NewBuffer(requestBody))
 	request.Header.Set("Content-Type", "application/json")
 
 	RESTRouter().ServeHTTP(recorder, request)
@@ -29,7 +29,7 @@ func TestCanUpdateABoilerplate(t *testing.T) {
 	json.NewDecoder(recorder.Body).Decode(&response)
 	assert.Equal(t, http.StatusOK, recorder.Code)
 
-	deletePersisteRandomBoilerplate(boiler.Id)
+	deletePersisteRandomBoilerplate(boilerplate.Id)
 }
 
 func TestCantUpdateANonExistingBoilerplate(t *testing.T) {

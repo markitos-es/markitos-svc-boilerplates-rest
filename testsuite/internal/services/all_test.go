@@ -9,9 +9,9 @@ import (
 
 func TestCanGetAllResources(t *testing.T) {
 	var service services.BoilerplateAllService = services.NewBoilerplateAllService(repository)
-	boiler, err := service.Do()
+	boilerplate, err := service.Do()
 
 	assert.Nil(t, err)
-	assert.IsType(t, services.BoilerplateAllResponse{}, *boiler)
+	assert.IsType(t, services.BoilerplateAllResponse{}, *boilerplate)
 	assert.True(t, repository.AllHaveBeenCalled())
 }

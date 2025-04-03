@@ -9,11 +9,11 @@ import (
 )
 
 func TestCanCreateAUser(t *testing.T) {
-	var boiler domain.Boilerplate = domain.Boilerplate{
+	var boilerplate domain.Boilerplate = domain.Boilerplate{
 		Name: domain.RandomPersonalName(),
 	}
 	var request services.BoilerplateCreateRequest = services.BoilerplateCreateRequest{
-		Name: boiler.Name,
+		Name: boilerplate.Name,
 	}
 
 	var service services.BoilerplateCreateService = services.NewBoilerplateCreateService(repository)

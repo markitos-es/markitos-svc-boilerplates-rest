@@ -87,7 +87,7 @@ func loadDatabase() {
 
 	//#[.'.]:> PASO 3: Crear una instancia del repositorio con la conexión a la base de datos
 	//#[.'.]:> El repositorio encapsula toda la lógica de acceso a datos
-	repo := database.NewBoilerPostgresRepository(db)
+	repo := database.NewBoilerplatePostgresRepository(db)
 	repository = &repo
 }
 

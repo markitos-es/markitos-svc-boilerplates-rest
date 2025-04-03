@@ -21,12 +21,12 @@ func NewBoilerplateOneService(repository domain.BoilerplateRepository) Boilerpla
 }
 
 func (s BoilerplateOneService) Do(request BoilerplateOneRequest) (*BoilerplateOneResponse, error) {
-	boilerId, err := domain.NewBoilerplateId(request.Id)
+	boilerplateId, err := domain.NewBoilerplateId(request.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	boilerplate, err := s.Repository.One(boilerId)
+	boilerplate, err := s.Repository.One(boilerplateId)
 	if err != nil {
 		return nil, err
 	}

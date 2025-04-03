@@ -17,12 +17,12 @@ func NewBoilerplateDeleteService(repository domain.BoilerplateRepository) Boiler
 }
 
 func (s BoilerplateDeleteService) Do(request BoilerplateDeleteRequest) error {
-	boilerId, err := domain.NewBoilerplateId(request.Id)
+	boilerplateId, err := domain.NewBoilerplateId(request.Id)
 	if err != nil {
 		return err
 	}
 
-	if err := s.Repository.Delete(boilerId); err != nil {
+	if err := s.Repository.Delete(boilerplateId); err != nil {
 		return err
 	}
 

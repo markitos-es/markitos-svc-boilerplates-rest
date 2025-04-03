@@ -14,10 +14,10 @@ func TestCanGetAResource(t *testing.T) {
 	}
 
 	var service services.BoilerplateOneService = services.NewBoilerplateOneService(repository)
-	boiler, err := service.Do(request)
+	boilerplate, err := service.Do(request)
 
 	assert.Nil(t, err)
-	assert.IsType(t, services.BoilerplateOneResponse{}, *boiler)
+	assert.IsType(t, services.BoilerplateOneResponse{}, *boilerplate)
 	assert.True(t, repository.OneHaveBeenCalledWith(&request.Id))
 }
 

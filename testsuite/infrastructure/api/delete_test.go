@@ -10,10 +10,10 @@ import (
 )
 
 func TestBoilerplateCanDelete(t *testing.T) {
-	var boiler *domain.Boilerplate = createPersistedRandomBoilerplate()
+	var boilerplate *domain.Boilerplate = createPersistedRandomBoilerplate()
 
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodDelete, "/v1/boilerplates/"+boiler.Id, nil)
+	request, _ := http.NewRequest(http.MethodDelete, "/v1/boilerplates/"+boilerplate.Id, nil)
 	request.Header.Set("Content-Type", "application/json")
 	RESTRouter().ServeHTTP(recorder, request)
 

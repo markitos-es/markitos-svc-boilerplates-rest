@@ -19,9 +19,9 @@ func TestCanSearchWithPattern(t *testing.T) {
 		id := domain.UUIDv4()
 		ids = append(ids, id)
 		name := pattern + domain.RandomPersonalName()
-		boiler, _ := domain.NewBoilerplate(id, name)
+		boilerplate, _ := domain.NewBoilerplate(id, name)
 
-		persistBoilerplate(boiler)
+		persistBoilerplate(boilerplate)
 	}
 
 	recorder := httptest.NewRecorder()

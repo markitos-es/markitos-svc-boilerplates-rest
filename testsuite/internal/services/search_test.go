@@ -9,9 +9,9 @@ import (
 
 func TestCanSearchResources(t *testing.T) {
 	var service services.BoilerplateSearchService = services.NewBoilerplateSearchService(repository)
-	boiler, err := service.Do(services.BoilerplateSearchRequest{})
+	boilerplate, err := service.Do(services.BoilerplateSearchRequest{})
 
 	assert.Nil(t, err)
-	assert.IsType(t, services.BoilerplateSearchResponse{}, *boiler)
+	assert.IsType(t, services.BoilerplateSearchResponse{}, *boilerplate)
 	assert.True(t, repository.SearchHaveBeenCalled())
 }

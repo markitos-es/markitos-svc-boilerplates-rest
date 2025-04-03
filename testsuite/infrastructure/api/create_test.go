@@ -14,9 +14,9 @@ import (
 
 func TestBoilerplateCanCreate(t *testing.T) {
 	recorder := httptest.NewRecorder()
-	boiler := internal_test.NewRandomOnlyNameBoilerplate()
+	boilerplate := internal_test.NewRandomOnlyNameBoilerplate()
 	requestBody, _ := json.Marshal(services.BoilerplateCreateRequest{
-		Name: boiler.Name,
+		Name: boilerplate.Name,
 	})
 	request, _ := http.NewRequest(http.MethodPost, "/v1/boilerplates", bytes.NewBuffer(requestBody))
 	request.Header.Set("Content-Type", "application/json")
@@ -27,7 +27,7 @@ func TestBoilerplateCanCreate(t *testing.T) {
 	json.NewDecoder(recorder.Body).Decode(&response)
 	responseId := response["id"].(string)
 	assert.Equal(t, http.StatusCreated, recorder.Code)
-	assert.Equal(t, boiler.Name, response["name"])
+	assert.Equal(t, boilerplate.Name, response["name"])
 	assert.NotEmpty(t, responseId)
 
 	deletePersisteRandomBoilerplate(responseId)

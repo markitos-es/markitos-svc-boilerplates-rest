@@ -21,9 +21,9 @@ func NewRandomOnlyNameBoilerplate() *domain.Boilerplate {
 	}
 }
 
-func NewRandomBoilerplateWithCustomId(boilerId *domain.BoilerplateId) *domain.Boilerplate {
+func NewRandomBoilerplateWithCustomId(boilerplateId *domain.BoilerplateId) *domain.Boilerplate {
 	return &domain.Boilerplate{
-		Id:        boilerId.Value(),
+		Id:        boilerplateId.Value(),
 		Name:      domain.RandomPersonalName(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),

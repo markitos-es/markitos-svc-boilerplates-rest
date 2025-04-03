@@ -10,8 +10,8 @@ import (
 )
 
 func TestBoilerplateCanListAllResources(t *testing.T) {
-	var boiler1 *domain.Boilerplate = createPersistedRandomBoilerplate()
-	var boiler2 *domain.Boilerplate = createPersistedRandomBoilerplate()
+	var boilerplate1 *domain.Boilerplate = createPersistedRandomBoilerplate()
+	var boilerplate2 *domain.Boilerplate = createPersistedRandomBoilerplate()
 
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodGet, "/v1/boilerplates/all", nil)
@@ -19,9 +19,9 @@ func TestBoilerplateCanListAllResources(t *testing.T) {
 	RESTRouter().ServeHTTP(recorder, request)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
-	assert.Contains(t, recorder.Body.String(), boiler1.Id)
-	assert.Contains(t, recorder.Body.String(), boiler2.Id)
+	assert.Contains(t, recorder.Body.String(), boilerplate1.Id)
+	assert.Contains(t, recorder.Body.String(), boilerplate2.Id)
 
-	deletePersisteRandomBoilerplate(boiler1.Id)
-	deletePersisteRandomBoilerplate(boiler2.Id)
+	deletePersisteRandomBoilerplate(boilerplate1.Id)
+	deletePersisteRandomBoilerplate(boilerplate2.Id)
 }

@@ -77,7 +77,7 @@ func GetDB() *gorm.DB {
 func GetRepository() domain.BoilerplateRepository {
 	repoOnce.Do(func() {
 		db := GetDB()
-		repo := database.NewBoilerPostgresRepository(db)
+		repo := database.NewBoilerplatePostgresRepository(db)
 		repoInstance = &repo
 		log.Printf("['.']:> 📦 Repositorio de prueba inicializado")
 	})

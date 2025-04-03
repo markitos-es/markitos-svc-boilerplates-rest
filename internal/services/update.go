@@ -27,12 +27,12 @@ func (s BoilerplateUpdateService) Do(request BoilerplateUpdateRequest) error {
 		return err
 	}
 
-	boiler, err := s.Repository.One(securedId)
+	boilerplate, err := s.Repository.One(securedId)
 	if err != nil {
 		return err
 	}
 
-	boiler.Name = securedName.Value()
+	boilerplate.Name = securedName.Value()
 
-	return s.Repository.Update(boiler)
+	return s.Repository.Update(boilerplate)
 }

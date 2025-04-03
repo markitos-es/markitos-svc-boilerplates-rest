@@ -7,19 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type BoilerPostgresRepository struct {
+type BoilerplatePostgresRepository struct {
 	db *gorm.DB
 }
 
-func NewBoilerPostgresRepository(db *gorm.DB) BoilerPostgresRepository {
-	return BoilerPostgresRepository{db: db}
+func NewBoilerplatePostgresRepository(db *gorm.DB) BoilerplatePostgresRepository {
+	return BoilerplatePostgresRepository{db: db}
 }
 
-func (r *BoilerPostgresRepository) Create(boilerplate *domain.Boilerplate) error {
+func (r *BoilerplatePostgresRepository) Create(boilerplate *domain.Boilerplate) error {
 	return r.db.Create(boilerplate).Error
 }
 
-func (r *BoilerPostgresRepository) Delete(id *domain.BoilerplateId) error {
+func (r *BoilerplatePostgresRepository) Delete(id *domain.BoilerplateId) error {
 	_, err := r.One(id)
 	if err != nil {
 		return domain.ErrBoilerplateNotFound
@@ -28,40 +28,40 @@ func (r *BoilerPostgresRepository) Delete(id *domain.BoilerplateId) error {
 	return r.db.Delete(&domain.Boilerplate{}, "id = ?", id.Value()).Error
 }
 
-func (r *BoilerPostgresRepository) Update(boilerplate *domain.Boilerplate) error {
+func (r *BoilerplatePostgresRepository) Update(boilerplate *domain.Boilerplate) error {
 	return r.db.Save(boilerplate).Error
 }
 
-func (r *BoilerPostgresRepository) One(id *domain.BoilerplateId) (*domain.Boilerplate, error) {
-	var boiler domain.Boilerplate
-	if err := r.db.First(&boiler, "id = ?", id.Value()).Error; err != nil {
+func (r *BoilerplatePostgresRepository) One(id *domain.BoilerplateId) (*domain.Boilerplate, error) {
+	var boilerplate domain.Boilerplate
+	if err := r.db.First(&boilerplate, "id = ?", id.Value()).Error; err != nil {
 		return nil, domain.ErrBoilerplateNotFound
 	}
-	return &boiler, nil
+	return &boilerplate, nil
 }
 
-func (r *BoilerPostgresRepository) All() ([]*domain.Boilerplate, error) {
-	var boilers []*domain.Boilerplate
-	if err := r.db.Find(&boilers).Error; err != nil {
+func (r *BoilerplatePostgresRepository) All() ([]*domain.Boilerplate, error) {
+	var boilerplates []*domain.Boilerplate
+	if err := r.db.Find(&boilerplates).Error; err != nil {
 		return nil, domain.ErrBoilerplateBadRequest
 	}
 
-	return boilers, nil
+	return boilerplates, nil
 }
 
-func (r *BoilerPostgresRepository) SearchAndPaginate(
+func (r *BoilerplatePostgresRepository) SearchAndPaginate(
 	searchTerm string,
 	pageNumber int,
 	pageSize int) ([]*domain.Boilerplate, error) {
 	offset := (pageNumber - 1) * pageSize
-	var boilers []*domain.Boilerplate
+	var boilerplates []*domain.Boilerplate
 	if err := r.db.Where("name ILIKE ?", fmt.Sprintf("%%%s%%", searchTerm)).
 		Order("name").
 		Limit(pageSize).
 		Offset(offset).
-		Find(&boilers).Error; err != nil {
+		Find(&boilerplates).Error; err != nil {
 		return nil, err
 	}
 
-	return boilers, nil
+	return boilerplates, nil
 }

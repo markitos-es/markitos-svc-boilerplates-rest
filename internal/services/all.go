@@ -17,12 +17,12 @@ func NewBoilerplateAllService(repository domain.BoilerplateRepository) Boilerpla
 }
 
 func (s BoilerplateAllService) Do() (*BoilerplateAllResponse, error) {
-	boilers, err := s.Repository.All()
+	boilerplates, err := s.Repository.All()
 	if err != nil {
 		return nil, err
 	}
 
 	return &BoilerplateAllResponse{
-		Data: boilers,
+		Data: boilerplates,
 	}, nil
 }

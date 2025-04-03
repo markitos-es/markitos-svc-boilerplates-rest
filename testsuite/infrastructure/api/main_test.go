@@ -33,19 +33,19 @@ func RESTRouter() *gin.Engine {
 }
 
 func createPersistedRandomBoilerplate() *domain.Boilerplate {
-	var boiler *domain.Boilerplate = internal_test.NewRandomBoilerplate()
-	testdb.GetRepository().Create(boiler)
+	var boilerplate *domain.Boilerplate = internal_test.NewRandomBoilerplate()
+	testdb.GetRepository().Create(boilerplate)
 
-	return boiler
+	return boilerplate
 }
 
-func persistBoilerplate(boiler *domain.Boilerplate) {
-	testdb.GetRepository().Create(boiler)
+func persistBoilerplate(boilerplate *domain.Boilerplate) {
+	testdb.GetRepository().Create(boilerplate)
 }
 
-func deletePersisteRandomBoilerplate(boilerId string) {
-	repository := database.NewBoilerPostgresRepository(testdb.GetDB())
-	id, err := domain.NewBoilerplateId(boilerId)
+func deletePersisteRandomBoilerplate(boilerplateId string) {
+	repository := database.NewBoilerplatePostgresRepository(testdb.GetDB())
+	id, err := domain.NewBoilerplateId(boilerplateId)
 	if err != nil {
 		panic(err)
 	}

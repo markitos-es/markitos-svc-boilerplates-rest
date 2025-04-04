@@ -4,8 +4,9 @@ import (
 	"errors"
 	"net/http"
 
+	"markitos-svc-boilerplates-rest/internal/domain"
+
 	"github.com/gin-gonic/gin"
-	"github.com/markitos-es/markitos-svc-boilerplates-rest/internal/domain"
 )
 
 type Server struct {

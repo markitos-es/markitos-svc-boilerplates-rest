@@ -3,9 +3,10 @@ package api
 import (
 	"net/http"
 
+	"markitos-svc-boilerplates-rest/internal/domain"
+	"markitos-svc-boilerplates-rest/internal/services"
+
 	"github.com/gin-gonic/gin"
-	"github.com/markitos-es/markitos-svc-boilerplates-rest/internal/domain"
-	"github.com/markitos-es/markitos-svc-boilerplates-rest/internal/services"
 )
 
 func (s *Server) search(ctx *gin.Context) {

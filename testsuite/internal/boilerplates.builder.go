@@ -3,7 +3,7 @@ package internal_test
 import (
 	"time"
 
-	"github.com/markitos-es/markitos-svc-boilerplates-rest/internal/domain"
+	"markitos-svc-boilerplates-rest/internal/domain"
 )
 
 func NewRandomBoilerplate() *domain.Boilerplate {

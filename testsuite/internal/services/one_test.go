@@ -3,8 +3,9 @@ package services_test
 import (
 	"testing"
 
-	"github.com/markitos-es/markitos-svc-boilerplates-rest/internal/domain"
-	"github.com/markitos-es/markitos-svc-boilerplates-rest/internal/services"
+	"markitos-svc-boilerplates-rest/internal/domain"
+	"markitos-svc-boilerplates-rest/internal/services"
+
 	"github.com/stretchr/testify/assert"
 )
 
